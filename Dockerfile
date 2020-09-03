@@ -9,7 +9,7 @@
 #   Red Hat, Inc. - initial API and implementation
 
 ARG NEXE_VERSION=v4.0.0-beta.14
-ARG NODE_VERSION=12.18.2
+ARG NODE_VERSION=12.18.3
 # around 5 hours delay
 ARG TIMEOUT_DELAY=20000
 FROM alpine:3.12.0 as precompiler
@@ -24,6 +24,9 @@ RUN mkdir /${NODE_VERSION} && \
     curl -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz | tar -zx --strip-components=1 -C /${NODE_VERSION}
 
 WORKDIR /${NODE_VERSION}
+
+# patch source to work on z until https://github.com/nodejs/node/pull/30199 is merged
+RUN [[ "$(uname -m)" == "s390x" ]] && sed -E -i "s|o\['libraries'\] \+= \['-static'\]|o\['libraries'\] \+= \['-static', '-no-pie'\]|g" configure.py
 
 # Add the .cc and .js for deasync
 COPY etc/ /${NODE_VERSION}
