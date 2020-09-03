@@ -26,7 +26,7 @@ RUN mkdir /${NODE_VERSION} && \
 WORKDIR /${NODE_VERSION}
 
 # patch source to work on z until https://github.com/nodejs/node/pull/30199 is merged
-RUN [[ "$(uname -m)" == "s390x" ]] && sed -E -i "s|o\['libraries'\] \+= \['-static'\]|o\['libraries'\] \+= \['-static', '-no-pie'\]|g" configure.py
+RUN if [[ "$(uname -m)" == "s390x" ]] ; then sed -E -i "s|o\['libraries'\] \+= \['-static'\]|o\['libraries'\] \+= \['-static', '-no-pie'\]|g" configure.py ; fi
 
 # Add the .cc and .js for deasync
 COPY etc/ /${NODE_VERSION}
