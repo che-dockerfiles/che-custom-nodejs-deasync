@@ -22,7 +22,7 @@ jobs:
   pre-compiler:
     strategy:
       matrix:
-        platform: ['linux/amd64', 'linux/arm64', 'linux/ppc64le']
+        platform: ['linux/amd64', 'linux/arm64', 'linux/ppc64le', 'linux/s390x']
     runs-on: ubuntu-latest
     steps:
     - name: Clone source code
@@ -50,7 +50,7 @@ jobs:
     needs: pre-compiler
     strategy:
       matrix:
-        platform: ['linux/amd64', 'linux/arm64', 'linux/ppc64le']
+        platform: ['linux/amd64', 'linux/arm64', 'linux/ppc64le', 'linux/s390x']
     runs-on: ubuntu-latest
     steps:
     - name: Clone source code
@@ -99,5 +99,6 @@ jobs:
         DOCKER_CLI_EXPERIMENTAL=enabled docker manifest create ${IMAGE_WITH_TAG} \
         ${IMAGE_NAME}:${IMAGE_VERSION}-linux-arm64 \
         ${IMAGE_NAME}:${IMAGE_VERSION}-linux-ppc64le \
+        ${IMAGE_NAME}:${IMAGE_VERSION}-linux-s390x \
         ${IMAGE_NAME}:${IMAGE_VERSION}-linux-amd64
         DOCKER_CLI_EXPERIMENTAL=enabled docker manifest push ${IMAGE_WITH_TAG}
