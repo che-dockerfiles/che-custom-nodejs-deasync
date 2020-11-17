@@ -22,7 +22,7 @@ jobs:
   pre-compiler:
     strategy:
       matrix:
-        platform: ['linux/amd64', 'linux/arm64', 'linux/ppc64le', 'linux/s390x']
+        platform: ['linux/amd64', 'linux/arm64', 'linux/ppc64le']
     runs-on: ubuntu-latest
     steps:
     - name: Clone source code
@@ -50,7 +50,7 @@ jobs:
     needs: pre-compiler
     strategy:
       matrix:
-        platform: ['linux/amd64', 'linux/arm64', 'linux/ppc64le', 'linux/s390x']
+        platform: ['linux/amd64', 'linux/arm64', 'linux/ppc64le']
     runs-on: ubuntu-latest
     steps:
     - name: Clone source code
