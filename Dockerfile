@@ -8,8 +8,8 @@
 # Contributors:
 #   Red Hat, Inc. - initial API and implementation
 
-ARG NEXE_SHA1=0f0869b292f1d7b68ba6e170d628de68a10c009f
-ARG NODE_VERSION=12.18.4
+ARG NEXE_SHA1=0ba696e976d9031110e995995e7e5ac33c03f91c
+ARG NODE_VERSION=12.20.0
 # around 5 hours delay
 ARG TIMEOUT_DELAY=21000
 FROM alpine:3.12.1 as precompiler
