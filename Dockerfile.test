@@ -1,4 +1,7 @@
-FROM che-dockerfiles/che-custom-nodejs-deasync:latest
+FROM che-dockerfiles/che-custom-nodejs-deasync:latest as parent
+FROM alpine:3.12.3
+COPY --from=parent /alpine-x64-12 /alpine-x64-12
+
 RUN apk add --no-cache git nodejs npm
 ENV NEXE_FLAGS="--target 'alpine-x64-12' --temp /tmp/nexe-cache --resource './public/**/*'"
 COPY test /test
