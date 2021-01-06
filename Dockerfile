@@ -79,7 +79,7 @@ RUN /nexe/index.js --build --no-mangle --enableNodeCli --temp / -c="--fully-stat
 
 
 # ok now make the image smaller with only the binary
-FROM alpine:3.12.1 as runtime
+FROM scratch as runtime
 ARG NEXE_SHA1
 ARG NODE_VERSION
 ENV NODE_VERSION=${NODE_VERSION}
