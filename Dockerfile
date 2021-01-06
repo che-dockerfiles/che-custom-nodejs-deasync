@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Red Hat, Inc.
+# Copyright (c) 2020-2021 Red Hat, Inc.
 # This program and the accompanying materials are made
 # available under the terms of the Eclipse Public License 2.0
 # which is available at https://www.eclipse.org/legal/epl-2.0/
@@ -12,7 +12,7 @@ ARG NEXE_SHA1=0ba696e976d9031110e995995e7e5ac33c03f91c
 ARG NODE_VERSION=12.20.0
 # around 5 hours delay
 ARG TIMEOUT_DELAY=21000
-FROM alpine:3.12.1 as precompiler
+FROM alpine:3.12.3 as precompiler
 ARG NODE_VERSION
 ARG TIMEOUT_DELAY
 ENV NODE_VERSION=${NODE_VERSION}
@@ -47,7 +47,7 @@ RUN \
 RUN echo "CPU(s): $(getconf _NPROCESSORS_ONLN)" && \
     timeout -s SIGINT ${TIMEOUT_DELAY} make -j $(getconf _NPROCESSORS_ONLN) || echo "build aborted"
 
-FROM alpine:3.12.1 as compiler
+FROM alpine:3.12.3 as compiler
 ARG NODE_VERSION
 ARG NEXE_SHA1
 ENV NODE_VERSION=${NODE_VERSION}
