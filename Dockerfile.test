@@ -1,5 +1,5 @@
 FROM che-dockerfiles/che-custom-nodejs-deasync:latest as parent
-FROM alpine:3.12.3
+FROM alpine:3.13.5
 COPY --from=parent /alpine-x64-12 /alpine-x64-12
 
 RUN apk add --no-cache git nodejs npm
