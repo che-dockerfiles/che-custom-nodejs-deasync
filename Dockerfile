@@ -18,7 +18,7 @@ ARG TIMEOUT_DELAY
 ENV NODE_VERSION=${NODE_VERSION}
 ENV TIMEOUT_DELAY=${TIMEOUT_DELAY}
 RUN apk add --no-cache curl make gcc g++ binutils-gold python2 linux-headers libgcc libstdc++ git vim tar gzip wget coreutils
-RUN mkdir /${NODE_VERSION} && \
+RUN mkdir -p /${NODE_VERSION} && \
     curl -sSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz | tar -zx --strip-components=1 -C /${NODE_VERSION} && \
     # patch source to work on z until https://github.com/nodejs/node/pull/30199 is merged
     sed -E -i "s|o\['libraries'\] \+= \['-static'\]|o\['libraries'\] \+= \['-static', '-no-pie'\]|g" /${NODE_VERSION}/configure.py
