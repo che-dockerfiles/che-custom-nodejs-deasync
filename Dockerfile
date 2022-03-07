@@ -12,7 +12,7 @@ ARG NEXE_SHA1=0ba696e976d9031110e995995e7e5ac33c03f91c
 ARG NODE_VERSION=14.19.0
 # around 5 hours delay
 ARG TIMEOUT_DELAY=21000
-FROM alpine:3.13.5 as precompiler
+FROM alpine:3.15.0 as precompiler
 ARG NODE_VERSION
 ARG TIMEOUT_DELAY
 ENV NODE_VERSION=${NODE_VERSION}
@@ -47,7 +47,7 @@ RUN \
 RUN echo "CPU(s): $(getconf _NPROCESSORS_ONLN)" && \
     timeout -s SIGINT ${TIMEOUT_DELAY} make -j $(getconf _NPROCESSORS_ONLN) || echo "build aborted"
 
-FROM alpine:3.12.3 as compiler
+FROM alpine:3.15.0 as compiler
 ARG NODE_VERSION
 ARG NEXE_SHA1
 ENV NODE_VERSION=${NODE_VERSION}
@@ -75,7 +75,7 @@ WORKDIR /
 RUN echo "console.log('hello world')" >> index.js
 
 # Build pre-asssembly of nodejs by using nexe and reusing our patched nodejs folder
-RUN /nexe/index.js --build --no-mangle --enableNodeCli --temp / -c="--fully-static" -m="-j$(getconf _NPROCESSORS_ONLN)" --target ${NODE_VERSION} -o alpine-x64-12
+RUN /nexe/index.js --build --no-mangle --enableNodeCli --temp / -c="--fully-static" -m="-j$(getconf _NPROCESSORS_ONLN)" --target ${NODE_VERSION} -o alpine-x64-14
 
 
 # ok now make the image smaller with only the binary
@@ -84,5 +84,5 @@ ARG NEXE_SHA1
 ARG NODE_VERSION
 ENV NODE_VERSION=${NODE_VERSION}
 ENV NEXE_SHA1=${NEXE_SHA1}
-COPY --from=compiler /alpine-x64-12 /alpine-x64-12
+COPY --from=compiler /alpine-x64-14 /alpine-x64-14
 
