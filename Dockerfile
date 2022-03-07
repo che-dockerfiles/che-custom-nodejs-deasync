@@ -9,7 +9,7 @@
 #   Red Hat, Inc. - initial API and implementation
 
 ARG NEXE_SHA1=0ba696e976d9031110e995995e7e5ac33c03f91c
-ARG NODE_VERSION=12.22.1
+ARG NODE_VERSION=14.19.0
 # around 5 hours delay
 ARG TIMEOUT_DELAY=21000
 FROM alpine:3.13.5 as precompiler
