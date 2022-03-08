@@ -11,61 +11,24 @@ dist: focal # newest available distribution
 language: bash
 services: docker
 
+stages:
+  - building
+
 git:
   depth: false  # TRAVIS_COMMIT_RANGE requires full commit history.
-  
-env:
-  global:
-  - TAG=next-travis
-  - REGISTRY=quay.io
   
 jobs:
   include:
   - stage: building
-    name: Build on amd64
-    arch: amd64
+    name: Build
     script: 
+      - sudo apt-get remove docker docker-engine docker.io containerd runc
       - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-      - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      - sudo add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
       - sudo apt-get update
-      - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+      - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce docker-ce-cli containerd.io
       - export SHORT_SHA=$(git rev-parse --short HEAD)-travis
       - echo "$QUAY_PASSWORD" | docker login quay.io -u "$QUAY_TOKEN" --password-stdin
-      - docker build -f Dockerfile -t "quay.io/eclipse/che-custom-nodejs-deasync:amd64-${SHORT_SHA}" .
-      - docker push "quay.io/eclipse/che-custom-nodejs-deasync:amd64-${SHORT_SHA}"
-  - stage: building
-    name: Build on arm64
-    arch: arm64
-    script:
-      - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-      - sudo add-apt-repository "deb [arch=arm64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-      - sudo apt-get update
-      - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-      - export SHORT_SHA=$(git rev-parse --short HEAD)-travis
-      - echo "$QUAY_PASSWORD" | docker login quay.io -u "$QUAY_TOKEN" --password-stdin
-      - docker build -f Dockerfile -t "quay.io/eclipse/che-custom-nodejs-deasync:arm64-${SHORT_SHA}" .
-      - docker push "quay.io/eclipse/che-custom-nodejs-deasync:arm64-${SHORT_SHA}"
-  - stage: building
-    name: Build on ppc64le
-    arch: ppc64le
-    script:
-      - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-      - sudo add-apt-repository "deb [arch=ppc64el] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-      - sudo apt-get update
-      - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-      - export SHORT_SHA=$(git rev-parse --short HEAD)-travis
-      - echo "$QUAY_PASSWORD" | docker login quay.io -u "$QUAY_TOKEN" --password-stdin
-      - docker build -f Dockerfile -t "quay.io/eclipse/che-custom-nodejs-deasync:ppc64le-${SHORT_SHA}" .
-      - docker push "quay.io/eclipse/che-custom-nodejs-deasync:ppc64le-${SHORT_SHA}"
-  - stage: building
-    name: Build on s390x
-    arch: s390x
-    script:
-      - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-      - sudo add-apt-repository "deb [arch=s390x] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-      - sudo apt-get update
-      - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-      - export SHORT_SHA=$(git rev-parse --short HEAD)-travis
-      - echo "$QUAY_PASSWORD" | docker login quay.io -u "$QUAY_TOKEN" --password-stdin
-      - docker build -f Dockerfile -t "quay.io/eclipse/che-custom-nodejs-deasync:s390x-${SHORT_SHA}" .
-      - docker push "quay.io/eclipse/che-custom-nodejs-deasync:s390x-${SHORT_SHA}"
+      - export IMAGE_NAME="quay.io/eclipse/che-custom-nodejs-deasync:$(arch)-${SHORT_SHA}"
+      - docker build -f Dockerfile -t "${IMAGE_NAME}" .
+      - docker push "${IMAGE_NAME}"
