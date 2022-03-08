@@ -17,18 +17,16 @@ stages:
 git:
   depth: false  # TRAVIS_COMMIT_RANGE requires full commit history.
   
-jobs:
-  include:
-  - stage: building
-    name: Build
-    script: 
-      - sudo apt-get remove docker docker-engine docker.io containerd runc
-      - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-      - sudo add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-      - sudo apt-get update
-      - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce docker-ce-cli containerd.io
-      - export SHORT_SHA=$(git rev-parse --short HEAD)-travis
-      - echo "$QUAY_PASSWORD" | docker login quay.io -u "$QUAY_TOKEN" --password-stdin
-      - export IMAGE_NAME="quay.io/eclipse/che-custom-nodejs-deasync:$(arch)-${SHORT_SHA}"
-      - docker build -f Dockerfile -t "${IMAGE_NAME}" .
-      - docker push "${IMAGE_NAME}"
+install: skip
+
+script:
+  - sudo apt-get remove docker docker-engine docker.io containerd runc
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce docker-ce-cli containerd.io
+  - export SHORT_SHA=$(git rev-parse --short HEAD)-travis
+  - echo "$QUAY_PASSWORD" | docker login quay.io -u "$QUAY_TOKEN" --password-stdin
+  - export IMAGE_NAME="quay.io/eclipse/che-custom-nodejs-deasync:$(arch)-${SHORT_SHA}"
+  - docker build -f Dockerfile -t "${IMAGE_NAME}" .
+  - docker push "${IMAGE_NAME}"
