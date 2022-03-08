@@ -10,8 +10,6 @@
 
 ARG NEXE_SHA1=0ba696e976d9031110e995995e7e5ac33c03f91c
 ARG NODE_VERSION=14.19.0
-# around 5 hours delay
-ARG TIMEOUT_DELAY=21000
 FROM alpine:3.15.0 as precompiler
 ARG NODE_VERSION
 ARG TIMEOUT_DELAY
@@ -45,20 +43,7 @@ RUN \
 
 # Compile with a given timeframe
 RUN echo "CPU(s): $(getconf _NPROCESSORS_ONLN)" && \
-    timeout -s SIGINT ${TIMEOUT_DELAY} make -j $(getconf _NPROCESSORS_ONLN) || echo "build aborted"
-
-FROM alpine:3.15.0 as compiler
-ARG NODE_VERSION
-ARG NEXE_SHA1
-ENV NODE_VERSION=${NODE_VERSION}
-ENV NEXE_SHA1=${NEXE_SHA1}
-RUN apk add --no-cache curl make gcc g++ binutils-gold python2 linux-headers libgcc libstdc++ git vim tar gzip wget coreutils
-COPY --from=precompiler /${NODE_VERSION} /${NODE_VERSION}
-RUN find /${NODE_VERSION} -print0 | xargs -0 touch -a -m -t 202001010000.00
-WORKDIR /${NODE_VERSION}
-
-# resume compilation
-RUN make -j $(getconf _NPROCESSORS_ONLN) && make install
+    make -j $(getconf _NPROCESSORS_ONLN) && make install
 
 # remove node binary
 RUN rm out/Release/node
