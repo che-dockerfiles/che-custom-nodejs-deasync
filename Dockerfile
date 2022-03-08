@@ -10,7 +10,7 @@
 
 ARG NEXE_SHA1=0ba696e976d9031110e995995e7e5ac33c03f91c
 ARG NODE_VERSION=14.19.0
-FROM alpine:3.15.0 as precompiler
+FROM alpine:3.15.0 as compiler
 ARG NODE_VERSION
 ARG TIMEOUT_DELAY
 ENV NODE_VERSION=${NODE_VERSION}
@@ -25,9 +25,6 @@ WORKDIR /${NODE_VERSION}
 
 # Add the .cc and .js for deasync
 COPY etc/ /${NODE_VERSION}
-
-#change timestamp
-RUN find /${NODE_VERSION} -print0 | xargs -0 touch -a -m -t 202001010000.00
 
 # configure
 RUN ./configure --prefix=/usr --fully-static
