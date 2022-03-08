@@ -40,7 +40,7 @@ RUN \
 
 # Compile with a given timeframe
 RUN echo "CPU(s): $(getconf _NPROCESSORS_ONLN)" && \
-    make -j $(getconf _NPROCESSORS_ONLN) > /tmp/log && make install
+    make -j $(getconf _NPROCESSORS_ONLN) > /tmp/log && make install > /tmp/loginstall
 
 # remove node binary
 RUN rm out/Release/node
