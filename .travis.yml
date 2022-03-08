@@ -1,0 +1,44 @@
+os: linux
+dist: focal
+
+install:
+  - export SHORT_SHA=$(git rev-parse --short HEAD)-travis
+  - echo "$QUAY_PASSWORD" | docker login quay.io -u "$QUAY_TOKEN" --password-stdin
+
+env:
+  global:
+  - TAG=next-travis
+  - REGISTRY=quay.io
+  
+arch:
+  - amd64
+  - arm64
+  - ppc64le
+  - s390x  
+  
+jobs:
+  include:
+  - stage: building
+    name: Build on amd64
+    arch: amd64
+    script: 
+      - docker build -f Dockerfile -t "quay.io/eclipse/che-custom-nodejs-deasync:amd64-${SHORT_SHA}" .
+      - docker push "quay.io/eclipse/che-custom-nodejs-deasync:amd64-${SHORT_SHA}"
+  - stage: building
+    name: Build on arm64
+    arch: arm64
+    script:
+      - docker build -f Dockerfile -t "quay.io/eclipse/che-custom-nodejs-deasync:arm64-${SHORT_SHA}" .
+      - docker push "quay.io/eclipse/che-custom-nodejs-deasync:arm64-${SHORT_SHA}"
+  - stage: building
+    name: Build on ppc64le
+    arch: ppc64le
+    script:
+      - docker build -f Dockerfile -t "quay.io/eclipse/che-custom-nodejs-deasync:ppc64le-${SHORT_SHA}" .
+      - docker push "quay.io/eclipse/che-custom-nodejs-deasync:ppc64le-${SHORT_SHA}"
+  - stage: building
+    name: Build on s390x
+    arch: s390x
+    script:
+      - docker build -f Dockerfile -t "quay.io/eclipse/che-custom-nodejs-deasync:s390x-${SHORT_SHA}" .
+      - docker push "quay.io/eclipse/che-custom-nodejs-deasync:s390x-${SHORT_SHA}"
